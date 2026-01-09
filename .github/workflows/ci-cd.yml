@@ -1,0 +1,35 @@
+name: CI/CD LAMP Docker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v3
+
+      - name: Vérifier la version de Docker Compose
+        run: docker compose version
+
+      - name: Build des containers
+        run: docker compose build
+
+      - name: Lancement des containers
+        run: docker compose up -d
+
+      - name: Vérifier que le service web répond
+        run: |
+          sleep 15
+          curl -f http://localhost:8080 || exit 1
+
+      - name: Arrêt des containers
+        run: docker compose down
+
